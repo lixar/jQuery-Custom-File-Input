@@ -1,2 +1,9 @@
-body { font-family: "Segoe UI", Arial, sans-serif; }
+body { font-family: "Segoe UI", Arial, sans-serif; font-size: 62.5%; margin: 50px; }
 label{ display:block; }
+fieldset { padding: .6em 0;border:0;border-top: 1px dotted #ddd; }
+legend { font-size: 1.5em; font-weight: bold; color: #555; padding: .5em 1em .5em 0; background: #fff;  }
+label { font-size: 1.4em; display: block; margin: .5em 10px .5em 0;  }
+
+input#upload {background: #e3e3e3;border: 1px solid #bbb;border-radius: 3px;-webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;box-shadow: inset 0 0 1px 1px #f6f6f6;color: #333;font: bold 12px/1 "helvetica neue", helvetica, arial, sans-serif;padding: 8px 10px 9px;text-align: center;text-shadow: 0 1px 0 #fff;margin: 10px 0;}
+input#upload:hover {background: #d9d9d9;-webkit-box-shadow: inset 0 0 1px 1px #eaeaea;box-shadow: inset 0 0 1px 1px #eaeaea;color: #222;cursor: pointer;}
+input#upload:active{background: #d0d0d0;-webkit-box-shadow: inset 0 0 1px 1px #e3e3e3;box-shadow: inset 0 0 1px 1px #e3e3e3;color: #000;}
