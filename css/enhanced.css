@@ -1,4 +1,4 @@
-/*  =============================
+/*	=============================
 		Upload element style
 	============================= */
 .customfile-input {position: absolute;height: 100px;cursor: pointer;background: transparent;border: 0;opacity: 0;-moz-opacity: 0;filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);z-index: 999;}
@@ -11,6 +11,7 @@
 .customfile-button{display: inline-block;background: #e3e3e3;border: 1px solid #bbb;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;-webkit-box-shadow: inset 0 0 1px 1px #f6f6f6;box-shadow: inset 0 0 1px 1px #f6f6f6;color: #333;font: bold 12px/1 "helvetica neue", helvetica, arial, sans-serif;padding: 6px 10px 7px;text-align: center;text-shadow: 0 1px 0 #fff;position: absolute;right: 2px;top: 2px;}
 .customfile:hover .customfile-button{background: #d9d9d9;-webkit-box-shadow: inset 0 0 1px 1px #eaeaea;box-shadow: inset 0 0 1px 1px #eaeaea;color: #222;cursor: pointer;}
 .customfile:focus .customfile-button,.customfile:active .customfile-button{background: #d0d0d0;-webkit-box-shadow: inset 0 0 1px 1px #e3e3e3;box-shadow: inset 0 0 1px 1px #e3e3e3;color: #000;}
+.customfile-disabled:hover .customfile-button,.customfile-disabled:focus .customfile-button,.customfile-disabled:active .customfile-button{color: #333 !important;background: #e3e3e3 !important;}
 
 /*file type icons*/
 .customfile-ext-jpg, .customfile-ext-gif, .customfile-ext-png, .customfile-ext-jpeg, .customfile-ext-bmp { background-image: url(../images/icon-image.gif);}
