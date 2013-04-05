@@ -49,7 +49,7 @@
 		//create custom control button
 		var uploadButton = $('<span/>', {
 			text: 'Browse',
-			'class': 'orangeButton',
+			'class': 'customfile-button',
 			"aria-hidden": 'true'
 		}).appendTo(upload);
 		
