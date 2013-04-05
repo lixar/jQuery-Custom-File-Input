@@ -8,7 +8,9 @@
  * --------------------------------------------------------------------
  */
 ;(function ($) {
-	$.fn.customFileInput = function() {
+	$.fn.customFileInput = function(options) {
+		var options = $.extend({}, $.fn.customFileInput.defaults, options);
+		
 		//apply events and styles for file input element
 		var fileInput = $(this).addClass('customfile-input') //add class for CSS
 		.bind('disable', function() {
@@ -55,7 +57,7 @@
 		
 		//create custom control feedback
 		var uploadFeedback = $('<span/>', {
-			text: 'No selected file...',
+			text: options.feedbackMessage,
 			'class': 'customfile-feedback',
 			'aria-hidden': 'true'
 		}).appendTo(upload);
@@ -64,8 +66,7 @@
 		if (fileInput.is('[disabled]')) {
 			fileInput.trigger('disable');
 		}
-	
-	
+		
 		//on mousemove, keep file input under the cursor to steal click
 		upload.mousemove(function(e) {
 			fileInput.css({
@@ -78,5 +79,9 @@
 	
 		//return jQuery
 		return $(this);
+	};
+	
+	$.fn.customFileInput.defaults = {
+		feedbackMessage : 'No selected file...'
 	};
 })(jQuery);
