@@ -1,3 +1,3 @@
 $(document).ready(function(){
-	$('#file').customFileInput();
+	$('.file').customFileInput();
 });
