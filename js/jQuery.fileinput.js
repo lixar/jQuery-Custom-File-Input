@@ -2,10 +2,11 @@
  * --------------------------------------------------------------------
  * jQuery customfileinput plugin
  * Author: Scott Jehl, scott@filamentgroup.com
- * Modified by: Lixar I.T
+ * Modified By: Lixar I.T
  * Copyright (c) 2009 Filament Group
  * licensed under MIT (filamentgroup.com/examples/mit-license.txt)
  * --------------------------------------------------------------------
+ * <input type="file" name="file" class="uploadFileInput" data-extensions="all" || data-extensions="zip,png" />
  */
 ;(function ($) {
 	$.fn.customFileInput = function(options) {
@@ -34,15 +35,43 @@
 					fileExtClass = 'customfile-ext-' + fileExtension,
 					uploadFeedback = $(this).parent().find('.customfile-feedback'),
 					uploadButton = $(this).parent().find('.customfile-button');
+					
+				var getExtensions = $(this).data('extensions');
+				var validExtension = false;
 				
-				uploadFeedback.text(fileName) //set feedback text to filename
-				.removeClass(uploadFeedback.data('fileext') || '') //remove any existing file extension class
-				.addClass(fileExtClass) //add file extension class
-				.data('fileext', fileExtClass) //store file extension for class removal on next change
-				.addClass('customfile-feedback-populated'); //add class to show populated state
+				if(!getExtensions){
+					throw 'Attribute data-extensions must exist and have a value (data-extensions=\"all\")';
+				} else if(getExtensions == 'all'){
+					validExtension = true;
+				} else {
+					var splitExtensions = getExtensions.split(',');
+					
+					for (index in splitExtensions) {
+						
+						var extension = splitExtensions[index].trim();
+						
+						if (fileExtension == extension) {
+							validExtension = true;
+							break;
+						}
+					}
+					
+				}
 				
-				//change text of button
-				uploadButton.text('Change');
+				if (validExtension) {
+					uploadFeedback.text(fileName) //set feedback text to filename
+					.removeClass(uploadFeedback.data('fileext') || '') //remove any existing file extension class
+					.addClass(fileExtClass) //add file extension class
+					.data('fileext', fileExtClass) //store file extension for class removal on next change
+					.addClass('customfile-feedback-populated'); //add class to show populated state
+					
+					//change text of button
+					uploadButton.text('Change');
+				} else {
+					uploadFeedback.text('Extension not supported.').removeClass('' + uploadFeedback.data('fileext') + ' customfile-feedback-populated');
+					uploadButton.text('Browse');
+				}
+				
 			},
 			click: function(){
 				fileInput.data('val', fileInput.val());
