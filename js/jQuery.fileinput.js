@@ -10,34 +10,38 @@
 ;(function ($) {
 	$.fn.customFileInput = function(options) {
 		var options = $.extend({}, $.fn.customFileInput.defaults, options);
+		var fileInput = $(this);
+		fileInput.addClass('customfile-input');
 		
 		//apply events and styles for file input element
-		var fileInput = $(this).addClass('customfile-input').bind({
-			disable: function(){
-				fileInput.attr('disabled', true);
+		$(this).bind({
+			disable: function(){			
+				$(this).prop('disabled', true);
 				upload.addClass('customfile-disabled');
 			},
 			enable: function(){
-				fileInput.removeAttr('disabled');
+				$(this).removeProp('disabled');
 				upload.removeClass('customfile-disabled');
 			},
 			checkChange: function(){
-				if (fileInput.val() && fileInput.val() != fileInput.data('val')) {
-					fileInput.trigger('change');
+				if ($(this).val() && $(this).val() != $(this).data('val')) {
+					$(this).trigger('change');
 				}
 			},
 			change: function(){
-				//get file name
-				var fileName = $(this).val().split(/\\/).pop();
-				//get file extension
-				var fileExt = 'customfile-ext-' + fileName.split('.').pop().toLowerCase();
-				//update the feedback
+				var fileName = $(this).val().split(/\\/).pop(),
+					fileExtension = fileName.split('.').pop().toLowerCase(),
+					fileExtClass = 'customfile-ext-' + fileExtension,
+					uploadFeedback = $(this).parent().find('.customfile-feedback'),
+					uploadButton = $(this).parent().find('.customfile-button');
+				
 				uploadFeedback.text(fileName) //set feedback text to filename
-				.removeClass(uploadFeedback.data('fileExt') || '') //remove any existing file extension class
-				.addClass(fileExt) //add file extension class
-				.data('fileExt', fileExt) //store file extension for class removal on next change
+				.removeClass(uploadFeedback.data('fileext') || '') //remove any existing file extension class
+				.addClass(fileExtClass) //add file extension class
+				.data('fileext', fileExtClass) //store file extension for class removal on next change
 				.addClass('customfile-feedback-populated'); //add class to show populated state
-				//change text of button	
+				
+				//change text of button
 				uploadButton.text('Change');
 			},
 			click: function(){
@@ -58,30 +62,24 @@
 			text: 'Browse',
 			'class': 'customfile-button',
 			"aria-hidden": 'true'
-		}).appendTo(upload);
+		});
 		
 		//create custom control feedback
 		var uploadFeedback = $('<span/>', {
 			text: options.feedbackMessage,
 			'class': 'customfile-feedback',
 			'aria-hidden': 'true'
-		}).appendTo(upload);
+		});
 		
 		//match disabled state
-		if (fileInput.is('[disabled]')) {
-			fileInput.trigger('disable');
+		if ($(this).is('[disabled]')) {
+			$(this).trigger('disable');
 		}
 		
-		//on mousemove, keep file input under the cursor to steal click
-		upload.mousemove(function(e) {
-			fileInput.css({
-				'left': e.pageX - upload.offset().left - fileInput.outerWidth() + 20,
-				//position right side 20px right of cursor X)
-				'top': e.pageY - upload.offset().top - $(window).scrollTop() - 3
-			});
-		}).insertAfter(fileInput); //insert after the input
-		fileInput.appendTo(upload);
-	
+		$(this).wrap(upload);
+		uploadButton.insertAfter($(this));
+		uploadFeedback.insertAfter($(this));
+		
 		//return jQuery
 		return $(this);
 	};
