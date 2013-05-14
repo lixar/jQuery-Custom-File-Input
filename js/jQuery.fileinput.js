@@ -30,48 +30,51 @@
 				}
 			},
 			change: function(){
-				var fileName = $(this).val().split(/\\/).pop(),
-					fileExtension = fileName.split('.').pop().toLowerCase(),
-					fileExtClass = 'customfile-ext-' + fileExtension,
-					uploadFeedback = $(this).parent().find('.customfile-feedback'),
-					uploadButton = $(this).parent().find('.customfile-button');
-					
-				var getExtensions = $(this).data('extensions');
-				var validExtension = false;
+				var fileName = $(this).val().split(/\\/).pop();
 				
-				if(!getExtensions){
-					throw 'Attribute data-extensions must exist and have a value (data-extensions=\"all\")';
-				} else if(getExtensions == 'all'){
-					validExtension = true;
-				} else {
-					var splitExtensions = getExtensions.split(',');
+				if(!fileName == ''){
+					var fileExtension = fileName.split('.').pop().toLowerCase(),
+						fileExtClass = 'customfile-ext-' + fileExtension,
+						uploadFeedback = $(this).parent().find('.customfile-feedback'),
+						uploadButton = $(this).parent().find('.customfile-button');
+						
+					var getExtensions = $(this).data('extensions');
+					var validExtension = false;
 					
-					for (index in splitExtensions) {
+					if(!getExtensions){
+						throw 'Attribute data-extensions must exist and have a value (data-extensions=\"all\")';
+					} else if(getExtensions == 'all'){
+						validExtension = true;
+					} else {
+						var splitExtensions = getExtensions.split(',');
 						
-						var extension = splitExtensions[index].trim();
-						
-						if (fileExtension == extension) {
-							validExtension = true;
-							break;
+						for (index in splitExtensions) {
+							
+							var extension = splitExtensions[index].trim();
+							
+							if (fileExtension == extension) {
+								validExtension = true;
+								break;
+							}
 						}
+						
 					}
 					
-				}
+					if (validExtension) {
+						uploadFeedback.text(fileName) //set feedback text to filename
+						.removeClass(uploadFeedback.data('fileext') || '') //remove any existing file extension class
+						.addClass(fileExtClass) //add file extension class
+						.data('fileext', fileExtClass) //store file extension for class removal on next change
+						.addClass('customfile-feedback-populated'); //add class to show populated state
+						
+						//change text of button
+						uploadButton.text('Change');
+					} else {
+						uploadFeedback.text('Extension not supported.').removeClass('' + uploadFeedback.data('fileext') + ' customfile-feedback-populated');
+						uploadButton.text('Browse');
+					}
 				
-				if (validExtension) {
-					uploadFeedback.text(fileName) //set feedback text to filename
-					.removeClass(uploadFeedback.data('fileext') || '') //remove any existing file extension class
-					.addClass(fileExtClass) //add file extension class
-					.data('fileext', fileExtClass) //store file extension for class removal on next change
-					.addClass('customfile-feedback-populated'); //add class to show populated state
-					
-					//change text of button
-					uploadButton.text('Change');
-				} else {
-					uploadFeedback.text('Extension not supported.').removeClass('' + uploadFeedback.data('fileext') + ' customfile-feedback-populated');
-					uploadButton.text('Browse');
 				}
-				
 			},
 			click: function(){
 				fileInput.data('val', fileInput.val());
