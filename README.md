@@ -1,10 +1,28 @@
-Code Examples from the book [Designing with Progressive Enhancement](http://filamentgroup.com/dwpe)
+[(jQuery)](http://jquery.com) Custom File input 
+================================ 
+
+Basic Usage
 ================================
+`<input type="file" name="file" class="file" data-extensions="all" />` Accepts all extensions <br/>
+`<input type="file" name="file" class="file" data-extensions="zip,png" />` Accepts Custom Extensions User defined <br/>
 
-This repository includes open-sourced code developed and maintained by Filament Group, Inc. as part of the book "Designing With Progressive Enhancement" (Peachpit).
+```js
+$(document).ready(function(){
+	$('.file').customFileInput();
+});
+```
 
-Those who purchase the book can access all of the examples from the book at the following URL: http://filamentgroup.com/dwpe#codeexamples.
+Custom Usage
+================================
+```js
+$(document).ready(function(){
+	$('.file').customFileInput({
+		feedbackMessage : 'Currently no Selected File...'
+	});
+});
+```
+This repository includes open-sourced code developed and maintained by Lixar I.T.
 
-All examples use the [jQuery JavaScript library](http://jquery.com).
+All examples use the [jQuery library](http://jquery.com).
 
-These code examples use the [EnhanceJS framework](https://github.com/filamentgroup/EnhanceJS) for applying progressive enhancement based on browser capabilities testing.
+Credit to [Filament Group, Inc.](http://filamentgroup.com/lab/jquery_custom_file_input_book_designing_with_progressive_enhancement/) for original code.  
