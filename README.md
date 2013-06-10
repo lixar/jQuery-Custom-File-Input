@@ -1,5 +1,6 @@
 [(jQuery)](http://jquery.com) Custom File input 
 ================================ 
+This Plugin supports disabled="disabled" and multiple="multiple" attribute
 
 Basic Usage
 ================================
@@ -21,6 +22,7 @@ $(document).ready(function(){
 	});
 });
 ```
+
 This repository includes open-sourced code developed and maintained by Lixar I.T.
 
 All examples use the [jQuery library](http://jquery.com).
