@@ -113,14 +113,6 @@
 			'aria-hidden': 'true'
 		});
 
-		//create custom control upload Porgress bar
-		var uploadProgress = $('<div/>', {
-			html: '<span></span>',
-			'class': 'customfile-progress',
-			"aria-hidden": 'true',
-			style: 'display: none;'
-		});
-
 		$(this).wrap(upload);
 		uploadButton.insertAfter($(this));
 		uploadFeedback.insertAfter($(this));
