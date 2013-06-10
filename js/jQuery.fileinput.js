@@ -16,13 +16,11 @@
 		
 		//apply events and styles for file input element
 		$(this).bind({
-			disable: function(){			
-				$(this).prop('disabled', true);
-				upload.addClass('customfile-disabled');
-			},
-			enable: function(){
-				$(this).removeProp('disabled');
-				upload.removeClass('customfile-disabled');
+			click: function(){
+				fileInput.data('val', fileInput.val());
+				setTimeout(function() {
+					fileInput.trigger('checkChange');
+				}, 100);
 			},
 			checkChange: function(){
 				if ($(this).val() && $(this).val() != $(this).data('val')) {
@@ -75,12 +73,6 @@
 					}
 				
 				}
-			},
-			click: function(){
-				fileInput.data('val', fileInput.val());
-				setTimeout(function() {
-					fileInput.trigger('checkChange');
-				}, 100);
 			}
 		});
 	
@@ -103,14 +95,19 @@
 			'aria-hidden': 'true'
 		});
 		
-		//match disabled state
-		if ($(this).is('[disabled]')) {
-			$(this).trigger('disable');
-		}
-		
 		$(this).wrap(upload);
 		uploadButton.insertAfter($(this));
 		uploadFeedback.insertAfter($(this));
+		
+		//if disabled attrbitue is detected
+		fileInput.each(function(){
+			var inputs = $(this),
+				disabledInput = inputs.prop('disabled');
+
+			if(disabledInput === true){
+				inputs.parent().addClass('customfile-disabled');
+			}
+		});
 		
 		//return jQuery
 		return $(this);
