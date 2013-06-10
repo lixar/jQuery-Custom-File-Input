@@ -6,7 +6,7 @@
  * Copyright (c) 2009 Filament Group
  * licensed under MIT (filamentgroup.com/examples/mit-license.txt)
  * --------------------------------------------------------------------
- * <input type="file" name="file" class="uploadFileInput" data-extensions="all" || data-extensions="zip,png" />
+ * <input type="file" name="file" class="uploadFileInput" data-allowed="zip, rar" />
  */
 ;(function ($) {
 	"use strict";
@@ -35,7 +35,6 @@
 					getFileListLength = getFileList.length,
 					fileToObject = getFileList[0];
 
-
 				var extensions = $(this).data('extensions'),
 					parent = $(this).parent(),
 					uploadFeedback = parent.find('.customfile-feedback'),
@@ -43,8 +42,8 @@
 
 				//checking if extensions are valid.
 				var fileExtension = [];
-				for(var e = 0; e < getFileListLength; e++){
-					fileExtension.push( getFileList[e].name.split('.').pop().toLowerCase() );
+				for(var extension = 0; extension < getFileListLength; extension++){
+					fileExtension.push( getFileList[extension].name.split('.').pop().toLowerCase() );
 				}
 
 				var validExtension = fileExtValidation(extensions, fileExtension);
@@ -63,11 +62,9 @@
 						//change text of button
 						uploadButton.text('Change');
 					} else {
-						//To use with caution Might reset all form elements
-						$(this).parents('form').trigger('reset');
 
-						uploadFeedback.text('Extension not supported.').removeClass('' + uploadFeedback.data('fileext') + ' customfile-feedback-populated');
-						uploadButton.text('Browse');
+						notValidExtension();
+
 					}
 
 				} else if(fileToObject.name !== '' && getFileListLength > 1){
@@ -82,11 +79,9 @@
 
 						uploadButton.text('Change');
 					} else {
-						//To use with caution Might reset all form elements
-						$(this).parents('form').trigger('reset');
 
-						uploadFeedback.text('1 or more file as an invalid extension.').removeClass('' + uploadFeedback.data('fileext') + ' customfile-feedback-populated');
-						uploadButton.text('Browse');
+						notValidExtension();
+
 					}
 
 				}
@@ -117,6 +112,7 @@
 		uploadButton.insertAfter($(this));
 		uploadFeedback.insertAfter($(this));
 
+		//disables input field if this as disabled attribute
 		fileInput.each(function(){
 			var inputs = $(this),
 				disabledInput = inputs.prop('disabled');
@@ -131,7 +127,7 @@
 
 			if(!validExtensions){
 				throw 'Attribute data-extensions must exist and have a value (data-extensions=\"all\")';
-			} else if(validExtensions != 'all'){
+			} else if(validExtensions !== 'all'){
 
 				var splitValidExtensions = validExtensions.split(',');
 
@@ -158,7 +154,15 @@
 			}
 
 			return valid;
-		}
+		}//END fileExtValidation
+
+		function notValidExtension(){
+			//Use with Caution this will reset your whole form.. to avoid comment out.
+			$(this).parents('form').trigger('reset');
+
+			uploadFeedback.text('File extension not supported.').removeClass('' + uploadFeedback.data('fileext') + ' customfile-feedback-populated');
+			uploadButton.text('Browse');
+		}//END notValidExtension
 
 		//return jQuery
 		return $(this);
