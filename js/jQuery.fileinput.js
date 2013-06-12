@@ -7,8 +7,8 @@
  * licensed under MIT (filamentgroup.com/examples/mit-license.txt)
  * --------------------------------------------------------------------
  * <input type="file" name="file" class="uploadFileInput" data-allowed="zip, rar" />
- */
-;(function ($) {
+ */;
+(function($) {
 	"use strict";
 	$.fn.customFileInput = function(options) {
 		options = $.extend({}, $.fn.customFileInput.defaults, options);
@@ -16,74 +16,40 @@
 		fileInput.addClass('customfile-input');
 		fileInput.attr('size', '28'); //width Fix has firefox does not support CSS width for input of type file.
 
+		var ie = (function() {
+
+			var undef,
+				v = 3,
+				div = document.createElement('div'),
+				all = div.getElementsByTagName('i');
+
+			while (
+				div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+				all[0]);
+
+			return v > 4 ? v : undef;
+
+		}());
+
+		//Event Binding
 		fileInput.bind({
-			click: function(){
+			click: function() {
 				$(this).data('val', fileInput.val());
 				setTimeout(function() {
 					$(this).trigger('checkChange');
 				}, 100);
 			},
-			checkChange: function(){
+			checkChange: function() {
 				if ($(this).val() !== $(this).data('val')) {
 					$(this).trigger('change');
 				}
 			},
-			change: function(e){
+			change: function(e) {
 
-				//Multiple file Selection
-				var getFileList = e.target.files,
-					getFileListLength = getFileList.length,
-					fileToObject = getFileList[0];
-
-				var extensions = $(this).data('extensions'),
-					parent = $(this).parent(),
-					uploadFeedback = parent.find('.customfile-feedback'),
-					uploadButton = parent.find('.customfile-button');
-
-				//checking if extensions are valid.
-				var fileExtension = [];
-				for(var extension = 0; extension < getFileListLength; extension++){
-					fileExtension.push( getFileList[extension].name.split('.').pop().toLowerCase() );
-				}
-
-				var validExtension = fileExtValidation(extensions, fileExtension);
-				var fileExtClass = 'customfile-ext-' + fileExtension[0];
-
-
-				if(fileToObject.name !== '' && getFileListLength <= 1){
-
-					if (validExtension) {
-						uploadFeedback.text(fileToObject.name) //set feedback text to filename
-						.removeClass(uploadFeedback.data('fileext') || '') //remove any existing file extension class
-						.addClass(fileExtClass) //add file extension class
-						.data('fileext', fileExtClass) //store file extension for class removal on next change
-						.addClass('customfile-feedback-populated'); //add class to show populated state
-
-						//change text of button
-						uploadButton.text('Change');
-					} else {
-
-						notValidExtension();
-
-					}
-
-				} else if(fileToObject.name !== '' && getFileListLength > 1){
-
-					if (validExtension) {
-
-						uploadFeedback.text(getFileListLength + ' files selected.')
-						.removeClass(uploadFeedback.data('fileext') || '')
-						.addClass(fileExtClass)
-						.data('fileext', fileExtClass)
-						.addClass('customfile-feedback-populated');
-
-						uploadButton.text('Change');
-					} else {
-
-						notValidExtension();
-
-					}
-
+				if (ie <= 9) {
+					lessThanIE9($(this), e);
+				} else {
+					greaterThenIE9anOthers($(this), e);
 				}
 
 			}
@@ -113,25 +79,116 @@
 		uploadFeedback.insertAfter($(this));
 
 		//disables input field if this as disabled attribute
-		fileInput.each(function(){
+		fileInput.each(function() {
 			var inputs = $(this),
 				disabledInput = inputs.prop('disabled');
 
-			if(disabledInput === true){
+			if (disabledInput === true) {
 				inputs.parent().addClass('customfile-disabled');
 			}
 		});
 
-		function fileExtValidation(validExtensions, choosenFileExtensions){
+		/**
+		 *	Function for Browsers that Support multiple="multiple" attribute.
+		 */
+		function greaterThenIE9anOthers(element, event) {
+
+			var getFileList = event.target.files,
+				getFileListLength = getFileList.length,
+				fileToObject = getFileList[0];
+
+			//checking if extensions are valid.
+			var fileExtension = [];
+
+			for (var extension = 0; extension < getFileListLength; extension++) {
+				fileExtension.push(getFileList[extension].name.split('.').pop().toLowerCase());
+			}
+
+			var extensions = element.data('extensions'),
+				parent = element.parent(),
+				uploadFeedback = parent.find('.customfile-feedback'),
+				uploadButton = parent.find('.customfile-button'),
+				progressionBar = parent.find('.customfile-progress'),
+				fileExtClass = 'customfile-ext-' + fileExtension[0];
+
+			var validExtension = fileExtValidation(extensions, fileExtension);
+
+
+			if (fileToObject.name !== '' && getFileListLength <= 1) {
+
+				if (validExtension) {
+					uploadFeedback.text(fileToObject.name);
+
+					didValidate(uploadFeedback, uploadButton, fileExtClass);
+
+				} else {
+
+					didNotValidate(element, uploadFeedback, uploadButton);
+
+				}
+
+			} else if (fileToObject.name !== '' && getFileListLength > 1) {
+
+				if (validExtension) {
+
+					uploadFeedback.text(getFileListLength + ' files selected.');
+
+					didValidate(uploadFeedback, uploadButton, fileExtClass);
+
+				} else {
+
+					didNotValidate(element, uploadFeedback, uploadButton);
+
+				}
+
+			}
+		}
+
+		/**
+		 *	Function for Browsers that do not support multiple="multiple" so anything <= IE9
+		 */
+		function lessThanIE9(element) {
+			var fileName = element.val().split(/\\/).pop();
+
+			if (!fileName == '') {
+
+				var fileExtension = fileName.split('.').pop().toLowerCase(),
+					extensions = element.data('extensions'),
+					parent = element.parent(),
+					uploadFeedback = parent.find('.customfile-feedback'),
+					uploadButton = parent.find('.customfile-button'),
+					progressionBar = parent.find('.customfile-progress'),
+					fileExtClass = 'customfile-ext-' + fileExtension;
+
+				var validExtension = fileExtValidation(extensions, [fileExtension]);
+
+				if (validExtension) {
+					uploadFeedback.text(fileName);
+
+					didValidate(uploadFeedback, uploadButton, fileExtClass);
+
+				} else {
+
+					didNotValidate(element, uploadFeedback, uploadButton);
+
+				}
+
+			}
+		}
+
+		/**
+		 *	Validating Extensions
+		 */
+		function fileExtValidation(validExtensions, choosenFileExtensions) {
 			var valid = true;
 
-			if(!validExtensions){
+			if (!validExtensions) {
 				throw 'Attribute data-extensions must exist and have a value (data-extensions=\"all\")';
-			} else if(validExtensions !== 'all'){
+			} else if (validExtensions !== 'all') {
 
 				var splitValidExtensions = validExtensions.split(',');
 
-				for (var ext in choosenFileExtensions){
+				for (var ext in choosenFileExtensions) {
 
 					var choosenFileExtension = choosenFileExtensions[ext];
 					var validFileExtension = false;
@@ -140,7 +197,7 @@
 
 						var trimedValidExtension = splitValidExtensions[index].trim();
 
-						if(choosenFileExtension === trimedValidExtension){
+						if (choosenFileExtension === trimedValidExtension) {
 							validFileExtension = true;
 							break;
 						}
@@ -154,21 +211,37 @@
 			}
 
 			return valid;
-		}//END fileExtValidation
+		}
 
-		function notValidExtension(){
+		/**
+		 *	Extensions did validate
+		 */
+		function didValidate(feedback, upButton, fileExtClass) {
+			feedback.removeClass(feedback.data('fileext') || '')
+				.addClass(fileExtClass)
+				.data('fileext', fileExtClass)
+				.addClass('customfile-feedback-populated');
+
+			//change text of the upload button
+			upButton.text('Change');
+		}
+
+		/**
+		 *	Extensions did not validate
+		 */
+		function didNotValidate(element, feedback, upButton) {
 			//Use with Caution this will reset your whole form.. to avoid comment out.
-			$(this).parents('form').trigger('reset');
+			element.parents('form').trigger('reset');
 
-			uploadFeedback.text('File extension not supported.').removeClass('' + uploadFeedback.data('fileext') + ' customfile-feedback-populated');
-			uploadButton.text('Browse');
-		}//END notValidExtension
+			feedback.text('File extension not supported.').removeClass('' + feedback.data('fileext') + ' customfile-feedback-populated');
+			upButton.text('Browse');
+		} //END didNotValidate
 
 		//return jQuery
 		return $(this);
 	};
 
 	$.fn.customFileInput.defaults = {
-		feedbackMessage : 'No selected file...'
+		feedbackMessage: 'No selected file...'
 	};
 })(jQuery);
